@@ -113,7 +113,7 @@ libspdm_return_t pci_ide_km_process_session_message(void *spdm_context, uint32_t
 
     ide_reg_block_count = PCI_IDE_KM_IDE_REG_BLOCK_SUPPORTED_COUNT;
     status = pci_ide_km_query (m_pci_doe_context, spdm_context, &session_id,
-                               1, &dev_func_num, &bus_num, &segment, &max_port_index,
+                               port_idx, &dev_func_num, &bus_num, &segment, &max_port_index,
                                ide_reg_block, &ide_reg_block_count);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return status;

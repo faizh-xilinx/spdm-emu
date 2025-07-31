@@ -100,7 +100,10 @@ extern uint32_t m_exe_connection;
 extern uint32_t m_exe_session;
 
 #define DEFAULT_VF_FUNCTION_ID 0xbeef
+#define DEFAULT_PORT_IDX 1
+
 extern uint32_t vf_function_id;
+extern uint8_t port_idx;
 
 void libspdm_dump_hex_str(const uint8_t *buffer, size_t buffer_size);
 

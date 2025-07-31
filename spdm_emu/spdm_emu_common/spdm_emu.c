@@ -14,6 +14,7 @@
 uint32_t m_exe_mode = EXE_MODE_SHUTDOWN;
 
 uint32_t vf_function_id = DEFAULT_VF_FUNCTION_ID;
+uint8_t port_idx = DEFAULT_PORT_IDX;
 
 uint32_t m_exe_connection = (0 |
                              /* EXE_CONNECTION_VERSION_ONLY |*/
@@ -45,6 +46,7 @@ void print_usage(const char *name)
 {
     printf("\n%s [--trans MCTP|PCI_DOE|TCP|NONE]\n", name);
     printf("   [--vf_func_id VF_FUNCTION_ID <hex value starting with 0x or 0X>]\n");
+    printf("   [--port_idx PORT_INDEX]\n");
     printf("   [--tcp_sub RI|NO_RI]\n");
     printf("   [--ver 1.0|1.1|1.2|1.3]\n");
     printf("   [--sec_ver 1.0|1.1|1.2]\n");
@@ -583,6 +585,25 @@ void process_args(char *program_name, int argc, char *argv[])
                 continue;
             } else {
                 printf("invalid --vf_func_id\n");
+                print_usage(program_name);
+                exit(0);
+            }
+        }
+
+        if (strcmp(argv[0], "--port_idx") == 0)
+        {
+            if (strcmp(program_name, "spdm_requester_emu") != 0) {
+                printf("--port_idx can only be specified with spdm_requester_emu\n");
+                exit(0);
+            }
+            if (argc >= 2) {
+                port_idx = (uint32_t)strtoul(argv[1], NULL, 0);
+                printf("port_idx - %d\n", port_idx);
+                argc -= 2;
+                argv += 2;
+                continue;
+            } else {
+                printf("invalid --port_idx\n");
                 print_usage(program_name);
                 exit(0);
             }
