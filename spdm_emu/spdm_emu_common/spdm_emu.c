@@ -4,6 +4,7 @@
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/spdm-emu/blob/main/LICENSE.md
  **/
 
+#include <ctype.h>
 #include "spdm_emu.h"
 
 /*
@@ -11,6 +12,8 @@
  * EXE_MODE_CONTINUE
  */
 uint32_t m_exe_mode = EXE_MODE_SHUTDOWN;
+
+uint32_t vf_function_id = DEFAULT_VF_FUNCTION_ID;
 
 uint32_t m_exe_connection = (0 |
                              /* EXE_CONNECTION_VERSION_ONLY |*/
@@ -41,6 +44,7 @@ struct in_addr m_ip_address = { 0x0100007F };
 void print_usage(const char *name)
 {
     printf("\n%s [--trans MCTP|PCI_DOE|TCP|NONE]\n", name);
+    printf("   [--vf_func_id VF_FUNCTION_ID <hex value starting with 0x or 0X>]\n");
     printf("   [--tcp_sub RI|NO_RI]\n");
     printf("   [--ver 1.0|1.1|1.2|1.3]\n");
     printf("   [--sec_ver 1.0|1.1|1.2]\n");
@@ -447,6 +451,25 @@ value_string_entry_t m_exe_session_string_table[] = {
     { EXE_SESSION_EP_INFO, "EP_INFO" },
 };
 
+bool valid_vf_id(const char *str)
+{
+    if (str[0] != '0' || (str[1] != 'x' && str[1] != 'X')) {
+        return false;
+    }
+
+    if (str[2] == '\0') {
+        return false;
+    }
+
+    for (int i = 2; str[i] != '\0'; i++) {
+        if (!isxdigit((unsigned char)str[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool get_value_from_name(const value_string_entry_t *table,
                          size_t entry_count, const char *name,
                          uint32_t *value)
@@ -536,6 +559,30 @@ void process_args(char *program_name, int argc, char *argv[])
                 continue;
             } else {
                 printf("invalid --trans\n");
+                print_usage(program_name);
+                exit(0);
+            }
+        }
+
+        if (strcmp(argv[0], "--vf_func_id") == 0)
+        {
+            if (strcmp(program_name, "spdm_requester_emu") != 0) {
+                printf("--vf_func_id can only be specified with spdm_requester_emu\n");
+                exit(0);
+            }
+            if (argc >= 2) {
+                if (!valid_vf_id(argv[1])) {
+                    printf("invalid --vf_func_id %s\n", argv[1]);
+                    print_usage(program_name);
+                    exit(0);
+                }
+                vf_function_id = (uint32_t)strtoul(argv[1], NULL, 16);
+                printf("vf_func_id - 0x%x\n", vf_function_id);
+                argc -= 2;
+                argv += 2;
+                continue;
+            } else {
+                printf("invalid --vf_func_id\n");
                 print_usage(program_name);
                 exit(0);
             }

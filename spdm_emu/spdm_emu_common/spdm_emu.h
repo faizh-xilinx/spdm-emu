@@ -99,6 +99,9 @@ extern uint32_t m_exe_connection;
 #define EXE_SESSION_EP_INFO 0x4000
 extern uint32_t m_exe_session;
 
+#define DEFAULT_VF_FUNCTION_ID 0xbeef
+extern uint32_t vf_function_id;
+
 void libspdm_dump_hex_str(const uint8_t *buffer, size_t buffer_size);
 
 void dump_data(const uint8_t *buffer, size_t buffer_size);
