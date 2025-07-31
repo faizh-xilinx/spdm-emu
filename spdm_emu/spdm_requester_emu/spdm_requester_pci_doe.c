@@ -751,7 +751,9 @@ libspdm_return_t do_cxl_tsp_2nd_session_via_spdm(void *spdm_context, size_t inde
 libspdm_return_t pci_doe_process_session_message(void *spdm_context, uint32_t session_id)
 {
     libspdm_return_t status;
+#if 0
     static bool is_first = true;
+#endif
 
     status = pci_ide_km_process_session_message (spdm_context, session_id);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -763,6 +765,7 @@ libspdm_return_t pci_doe_process_session_message(void *spdm_context, uint32_t se
         return status;
     }
 
+#if 0
     status = cxl_ide_km_process_session_message (spdm_context, session_id);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return status;
@@ -774,6 +777,7 @@ libspdm_return_t pci_doe_process_session_message(void *spdm_context, uint32_t se
         return status;
     }
     is_first = false;
+#endif
 
     return LIBSPDM_STATUS_SUCCESS;
 }
